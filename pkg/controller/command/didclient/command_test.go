@@ -843,18 +843,21 @@ func TestCommand_CreatePeerDID(t *testing.T) {
 
 		routerEndpoint := "http://router.com"
 		keys := []string{"abc", "xyz"}
+
+		endpoint := model.NewDIDCommV2Endpoint([]model.DIDCommV2Endpoint{{
+			URI:         routerEndpoint,
+			RoutingKeys: keys,
+		}})
+
 		c.vdrRegistry = &mockvdr.MockVDRegistry{CreateValue: &did.Doc{
 			ID:      uuid.NewString(),
 			Context: []string{"https://w3id.org/did/v1"},
 			Service: []did.Service{
 				{
-					ID:   uuid.New().String(),
-					Type: didCommServiceType,
-					ServiceEndpoint: model.Endpoint{
-						URI:         routerEndpoint,
-						RoutingKeys: keys,
-					},
-					RecipientKeys: []string{"1ert5", "x5356s"},
+					ID:              uuid.New().String(),
+					Type:            didCommServiceType,
+					ServiceEndpoint: endpoint,
+					RecipientKeys:   []string{"1ert5", "x5356s"},
 				},
 			},
 		}}
@@ -891,7 +894,7 @@ func TestCommand_CreatePeerDID(t *testing.T) {
 				{
 					ID:              uuid.New().String(),
 					Type:            didCommServiceType,
-					ServiceEndpoint: model.Endpoint{URI: "http://router.com"},
+					ServiceEndpoint: model.NewDIDCommV2Endpoint([]model.DIDCommV2Endpoint{{URI: "http://router.com"}}),
 				},
 			},
 		}}
@@ -968,7 +971,7 @@ func TestCommand_CreatePeerDID(t *testing.T) {
 				{
 					ID:              uuid.New().String(),
 					Type:            didCommServiceType,
-					ServiceEndpoint: model.Endpoint{URI: "http://router.com"},
+					ServiceEndpoint: model.NewDIDCommV2Endpoint([]model.DIDCommV2Endpoint{{URI: "http://router.com"}}),
 					RecipientKeys:   []string{"1ert5", "x5356s"},
 				},
 			},
@@ -996,7 +999,7 @@ func TestCommand_CreatePeerDID(t *testing.T) {
 				{
 					ID:              uuid.New().String(),
 					Type:            didCommServiceType,
-					ServiceEndpoint: model.Endpoint{URI: "http://router.com"},
+					ServiceEndpoint: model.NewDIDCommV2Endpoint([]model.DIDCommV2Endpoint{{URI: "http://router.com"}}),
 				},
 			},
 		}}

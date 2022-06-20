@@ -245,13 +245,15 @@ func (c *Command) CreateOrbDID(rw io.Writer, req io.Reader) command.Error { // n
 
 	logutil.LogDebug(logger, CommandName, CreateOrbDIDCommandMethod, fmt.Sprintf("routerKeys: %+v", routerKeys))
 
+	endpoint := model.NewDIDCommV2Endpoint([]model.DIDCommV2Endpoint{{
+		URI:         serviceEndpoint,
+		RoutingKeys: routerKeys,
+	}})
+
 	didDoc.Service = []did.Service{{
-		ID:   serviceID,
-		Type: didcommv2Servicetype,
-		ServiceEndpoint: model.Endpoint{
-			URI:         serviceEndpoint,
-			RoutingKeys: routerKeys,
-		},
+		ID:              serviceID,
+		Type:            didcommv2Servicetype,
+		ServiceEndpoint: endpoint,
 	}}
 
 	var didMethodOpt []vdr.DIDMethodOption
@@ -483,14 +485,16 @@ func (c *Command) CreatePeerDID(rw io.Writer, req io.Reader) command.Error { // 
 		return command.NewExecuteError(CreateDIDErrorCode, err)
 	}
 
+	endpoint := model.NewDIDCommV2Endpoint([]model.DIDCommV2Endpoint{{
+		URI:         config.Endpoint(),
+		RoutingKeys: config.Keys(),
+	}})
+
 	docResolution, err := c.vdrRegistry.Create(
 		peer.DIDMethod,
 		&did.Doc{
 			Service: []did.Service{{
-				ServiceEndpoint: model.Endpoint{
-					URI:         config.Endpoint(),
-					RoutingKeys: config.Keys(),
-				},
+				ServiceEndpoint: endpoint,
 			}},
 			VerificationMethod: []did.VerificationMethod{*did.NewVerificationMethodFromBytes(
 				"#"+keyID,
